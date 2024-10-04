@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Registrasi REFORMATIKA 23</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="Logo_REFORMATIKA_23.png" type="image/x-icon">
+</head>
+<body>
+  <div class="container">
+    <div class="login-box">
+      <p>Presensi Kehadiran</p>
+      <form id="my-form" method="POST" action="https://script.google.com/macros/s/AKfycbz0TUvq1Ymn7qPK8vg37BvOhPxVQ9i3gs2TaUi2R64y3Sg7tHI6e20qjjk-V95m_xR9/exec">
+        <div class="user-box">
+          <input name="Nama" id="Nama" type="text" required>
+          <label>Nama</label>
+        </div>
+        <div class="user-box2">
+          <label>Tamu</label>
+          <select name="Tamu" id="Tamu" required onchange="showAdditionalInput()">
+            <option value="">--Pilih Tamu--</option>
+            <option value="Mahasiswa">Mahasiswa</option>
+            <option value="Siswa">Siswa</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div id="additionalInput"></div>
+        <button type="submit" id="submitBtn">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Kirim
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    function showAdditionalInput() {
+      const tamu = document.getElementById("Tamu").value;
+      const additionalInput = document.getElementById("additionalInput");
+      const submitBtn = document.getElementById("submitBtn");
+      
+      if (tamu === "Mahasiswa") {
+        additionalInput.innerHTML = `
+        <div class="user-box">
+          <input name="Universitas (Mahasiswa)" id="Universitas" type="text" required>
+          <label>Universitas</label>
+        </div>
+        <div class="user-box">
+          <input name="Jurusan (Mahasiswa)" id="Jurusan" type="text" required>
+          <label>Jurusan</label>
+        </div>
+        <div class="user-box">
+          <input name="Angkatan (Mahasiswa)" id="Angkatan" type="text" required>
+          <label>Angkatan</label>
+        </div>
+        `;
+        submitBtn.disabled = false;
+      } else if (tamu === "Siswa") {
+        additionalInput.innerHTML = `
+        <div class="user-box">
+          <input name="Asal Sekolah (Siswa)" id="Asal Sekolah" type="text" required>
+          <label>Asal Sekolah</label>
+        </div>
+        <div class="user-box">
+          <input name="Kelas (Siswa)" id="Kelas" type="text" required>
+          <label>Kelas</label>
+        </div>
+        `;
+        submitBtn.disabled = false;
+      } else if (tamu === "Lainnya") {
+        additionalInput.innerHTML = `
+          <div class="user-box">
+            <input name="Kerabat/Teman (Lainnya)" id="Kerabat/Teman (Lainnya)" type="text" required>
+            <label>Kerabat/Teman Anda</label>
+          </div>
+        `;
+        submitBtn.disabled = false;
+      } else {
+        additionalInput.innerHTML = "";
+      }
+    }
+
+    document.getElementById('my-form').addEventListener('submit', function(e) {
+      e.preventDefault();  // Mencegah pengiriman form default
+      submitBtn.disabled = true;
+      
+      Swal.fire({
+        title: 'Sedang Proses...',
+        text: 'Data Anda Sedang Dikirimkan!',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      
+      const formData = new FormData(this);
+      const actionUrl = this.action; 
+      
+      fetch(actionUrl, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response =>  {
+        const nama = document.getElementById('Nama').value;
+        Swal.close();
+        Swal.fire({
+          title: 'Registrasi Berhasil!',
+          html: `
+            Selamat Datang ${nama} di Seminar Nasional ANGKA 2024!
+          `,
+          icon: 'success',
+          allowOutsideClick: false,
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.replace('about:blank');
+          }
+        });
+      })
+    });
+    </script>
+
+</body>
+</html>
